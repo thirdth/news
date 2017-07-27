@@ -25,8 +25,8 @@ def topThree():
     c = conn.cursor()  # creates a cursor on that connection
 
     """ query that counts how many views each article has had by joining
-    articles with the cleanLog view created above, sorts in descending order
-    and only returns the top three"""
+    articles with the log on the log.path and articles.slug columns, it then
+    sorts in descending order and only returns the top three"""
     c.execute("SELECT articles.title, count(*) as num, articles.slug\
                     FROM articles, log\
                     where UPPER(log.path) LIKE UPPER(CONCAT('/article/',\
@@ -34,10 +34,10 @@ def topThree():
                     GROUP BY articles.title, articles.slug\
                     ORDER BY num DESC LIMIT 3;")
     results = c.fetchall()  # puts the results into a variable
-    conn.commit()  # commits all changes
     conn.close()  # close connection after we're done -we weren't born in barns
     data = "\r\nTop Three Articles:\r\n"
     i = 1
+    #  iterates through results to append each result to the data variable
     for result in results:
         data += str(i) + ". Article: " + str(result[0]) + "\r\n Views: " +\
                 str(result[1]) + "\r\n"
@@ -63,15 +63,15 @@ def popularWriters():
                 where authors.id = popularity.author;\
                 ")
     results = c.fetchall()  # puts the results into a variable
-    conn.commit()  # commits all changes
     conn.close()  # close connection after we're done -we weren't born in barns
     data = "Most Popular Writers:\r\n"
     i = 1
+    #  iterates through results to append each result to the data variable
     for result in results:
         data += str(i) + ". Writer: " + result[0] + "\r\n Views: " +\
                 str(result[1]) + "\r\n"
         i = i+1
-        #  appends the resuls of this query to the results.txt file
+    #  appends the resuls of this query to the results.txt file
     file = open('results.txt', 'a')
     file.write(data + '\r\n')
     file.close()
@@ -84,11 +84,13 @@ def errorPercent():
     conn = connect()
     c = conn.cursor()
     """queries the view total and returns the Date in which the number of
-    errors is greater than or equal to 1% of the number of requests"""
+    errors is greater than or equal to 1% of the number of requests, and the
+    percentage."""
     c.execute("SELECT numDate, numNum, denNum from total\
                     WHERE numNum >= .01*denNum\
                     ;")
     result = c.fetchall()
+    #  gets the percentage of errors and saves it in a string variable
     percent = str((round(float(result[0][1])/float(result[0][2]), 2)*100))
     conn.close()
     data = "Day(s) in which more than 1% of requests returned errors:\r\n " +\
@@ -102,7 +104,6 @@ def errorPercent():
 
 
 if __name__ == '__main__':
-    # createViewCleanLog()
     createViewPopularity()
     createNumerator()
     createDenominator()
