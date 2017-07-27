@@ -30,20 +30,16 @@ intended to change the newsdata.sql database in any way other than creating
 views when necessary.
 
 ### Views
-Views that were created: (These views are automatically created using the
-  answers.py file.)
-1. **cleanLog** - creates a view that replaces certain characters in the log file
-in order to be able to compare the log.path column with the articles.title
-column. The Code follows:
+Views that need to be created prior to running the code:
 
-  `CREATE or REPLACE VIEW cleanLog as select replace(replace(replace(path, '/article/', ''), '/', ''), '-', ' '), * from log;`
-
-2. **popularity** - creates a view that joins cleanLog and author so that cleanLog
+2. **popularity** - creates a view that joins log and author so that log
 has a column that has the Author id. It then groups the articles by the
 author, counting them and putting that count in descending order. The Code
 follows:
 
-  `CREATE or REPLACE VIEW popularity as SELECT articles.author, count(*) as num          FROM articles, cleanLog where UPPER(articles.title) LIKE UPPER(CONCAT('%',            cleanLog.replace ,'%')) GROUP BY articles.author ORDER BY num DESC;`
+  `CREATE or REPLACE VIEW popularity as SELECT articles.author, count(*) as num\
+    FROM articles, log where UPPER(log.path) LIKE UPPER(CONCAT('/article/',\
+    articles.slug)) GROUP BY articles.author ORDER BY num DESC;`
 
 3. **numerator** - creates a view that consists of the number of failed
 requests on each given day in order to be compared against the view denominator.
@@ -82,8 +78,10 @@ program through the command line in vagrant.
 11. Run the command `psql -d news -f newsdata.sql` in order to start the database environment. If you get
 an error, or postgreql is not set up on your computer look [here](http://www.techrepublic.com/blog/diy-it-guy/diy-a-postgresql-database-server-setup-anyone-can-handle/) for Instructions
 on how to download it and how to set-up a postgresql database.
+13. Create all the views from above.
 13. Exit the psql database by running the command `\q`
-13. Once the news database is initialized, you can run your python file.
+13. Once the news database is initialized and the views are created, you can
+run your python file.
 
 ## Sample Use
 This file is intended simply to return the answer to three separate questions.
