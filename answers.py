@@ -29,8 +29,8 @@ def topThree():
     sorts in descending order and only returns the top three"""
     c.execute("SELECT articles.title, count(*) as num, articles.slug\
                     FROM articles, log\
-                    where UPPER(log.path) LIKE UPPER(CONCAT('/article/',\
-                                articles.slug))\
+                    where log.path = CONCAT('/article/',\
+                                articles.slug)\
                     GROUP BY articles.title, articles.slug\
                     ORDER BY num DESC LIMIT 3;")
     results = c.fetchall()  # puts the results into a variable
@@ -40,7 +40,7 @@ def topThree():
     #  iterates through results to append each result to the data variable
     for result in results:
         data += str(i) + ". Article: " + str(result[0]) + "\r\n Views: " +\
-                str(result[1]) + "\r\n"
+            str(result[1]) + "\r\n"
         i = i + 1
     #  opens a results.txt file and writes the results into it
     file = open('results.txt', 'w')
@@ -69,7 +69,7 @@ def popularWriters():
     #  iterates through results to append each result to the data variable
     for result in results:
         data += str(i) + ". Writer: " + result[0] + "\r\n Views: " +\
-                str(result[1]) + "\r\n"
+            str(result[1]) + "\r\n"
         i = i+1
     #  appends the resuls of this query to the results.txt file
     file = open('results.txt', 'a')
@@ -91,7 +91,7 @@ def errorPercent():
                     ;")
     result = c.fetchall()
     #  gets the percentage of errors and saves it in a string variable
-    percent = str((round(float(result[0][1])/float(result[0][2]), 2)*100))
+    percent = str((round(float((result[0][1])/float(result[0][2])*100), 2)))
     conn.close()
     data = "Day(s) in which more than 1% of requests returned errors:\r\n " +\
         str(result[0][0]) + " Percentage: " + percent + "%"
@@ -104,10 +104,6 @@ def errorPercent():
 
 
 if __name__ == '__main__':
-    createViewPopularity()
-    createNumerator()
-    createDenominator()
-    createTotal()
     topThree()
     popularWriters()
     errorPercent()

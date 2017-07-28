@@ -18,4 +18,4 @@ Most Popular Writers:
  Views: 84557
 
 Day(s) in which more than 1% of requests returned errors:
- 2016-07-17 Percentage: 2.0%
+ 2016-07-17 Percentage: 2.26%
