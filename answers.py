@@ -89,13 +89,16 @@ def errorPercent():
     c.execute("SELECT numDate, numNum, denNum from total\
                     WHERE numNum >= .01*denNum\
                     ;")
-    result = c.fetchall()
-    #  gets the percentage of errors and saves it in a string variable
-    percent = str((round(float((result[0][1])/float(result[0][2])*100), 2)))
+    results = c.fetchall()
     conn.close()
-    data = "Day(s) in which more than 1% of requests returned errors:\r\n " +\
-        str(result[0][0]) + " Percentage: " + percent + "%"
-    #  appends the resuls of this query to the results.txt file
+    i = 0
+    data = "Day(s) in which more than 1% of requests returned errors:\r\n"
+    for result in results:
+        #  gets the percentage of errors and saves it in a string variable
+        percent = str((round(float((result[1])/float(result[2])*100), 2)))
+        #  appends the resuls of this query to the results.txt file
+        data += str(result[0]) + " Percentage: " + percent + "%"
+        i = i + 1
     file = open('results.txt', 'a')
     file.write(data + '\r\n')
     file.close()
