@@ -93,12 +93,14 @@ def errorPercent():
     conn.close()
     i = 0
     data = "Day(s) in which more than 1% of requests returned errors:\r\n"
+    # iterates through results to append each result to the data variable
     for result in results:
         #  gets the percentage of errors and saves it in a string variable
         percent = str((round(float((result[1])/float(result[2])*100), 2)))
-        #  appends the resuls of this query to the results.txt file
+        #  appends the resuls of this query to the data variable
         data += str(result[0]) + " Percentage: " + percent + "%"
         i = i + 1
+    #  appends the results to the results.txt file that was created above
     file = open('results.txt', 'a')
     file.write(data + '\r\n')
     file.close()
